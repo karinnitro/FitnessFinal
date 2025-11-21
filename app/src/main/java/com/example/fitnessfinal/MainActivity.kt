@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnessfinal.utils.SessionManager
 
@@ -13,28 +14,42 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        println("✅ MainActivity onCreate started")
 
-        sessionManager = SessionManager(this)
+        try {
+            sessionManager = SessionManager(this)
+            println("✅ SessionManager created")
 
-        val textView: TextView = findViewById(R.id.textView)
-        val button: Button = findViewById(R.id.button)
+            setContentView(R.layout.activity_main)
+            println("✅ Layout set")
 
-        // Показываем имя пользователя
-        val userDetails = sessionManager.getUserDetails()
-        val userName = userDetails[SessionManager.KEY_USER_NAME]
-        textView.text = if (userName.isNullOrEmpty()) {
-            "Добро пожаловать в Фитнес Трекер!"
-        } else {
-            "Добро пожаловать, $userName!"
-        }
+            val textView: TextView = findViewById(R.id.textView)
+            val button: Button = findViewById(R.id.button)
+            val btnWorkouts: Button = findViewById(R.id.btnWorkouts)
+            println("✅ Views found")
 
-        // Выход из системы
-        button.setOnClickListener {
-            sessionManager.logoutUser()
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            // Временно уберем проверку логина
+            textView.text = "Добро пожаловать в Фитнес Трекер!"
+            println("✅ Text set")
+
+            // Кнопка тренировок - простой переход
+            btnWorkouts.setOnClickListener {
+                Toast.makeText(this, "Переход к тренировкам", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, WorkoutListActivity::class.java))
+            }
+
+            // Выход
+            button.setOnClickListener {
+                println("✅ Logout button clicked")
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+
+            println("✅ MainActivity created successfully")
+
+        } catch (e: Exception) {
+            println("❌ ERROR in MainActivity: ${e.message}")
+            e.printStackTrace()
         }
     }
 }

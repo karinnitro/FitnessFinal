@@ -1,12 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.FitnessFinal" parent="Theme.Material3.DayNight">
-        <!-- Customize your light theme here. -->
-    </style>
-
-    <style name="Theme.FitnessFinal" parent="Base.Theme.FitnessFinal" />
-
-    <!-- Добавьте эту тему для совместимости -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.FitnessFinal" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 </resources>

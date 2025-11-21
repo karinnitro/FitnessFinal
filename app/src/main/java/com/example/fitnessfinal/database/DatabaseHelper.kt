@@ -177,4 +177,66 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
     }
 
+    // Добавьте эти методы в DatabaseHelper.kt
+
+    // Обновление тренировки
+    fun updateWorkout(workout: Workout): Boolean {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put(COLUMN_WORKOUT_TITLE, workout.title)
+            put(COLUMN_WORKOUT_DESCRIPTION, workout.description)
+            put(COLUMN_WORKOUT_DURATION, workout.duration)
+            put(COLUMN_WORKOUT_DATE, workout.date)
+        }
+
+        return try {
+            db.update(
+                TABLE_WORKOUTS,
+                values,
+                "$COLUMN_WORKOUT_ID = ?",
+                arrayOf(workout.id.toString())
+            ) > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // Удаление тренировки
+    fun deleteWorkout(workoutId: Long): Boolean {
+        val db = writableDatabase
+        return try {
+            db.delete(
+                TABLE_WORKOUTS,
+                "$COLUMN_WORKOUT_ID = ?",
+                arrayOf(workoutId.toString())
+            ) > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // Получение тренировки по ID
+    fun getWorkoutById(workoutId: Long): Workout? {
+        val db = readableDatabase
+        val query = """
+        SELECT * FROM $TABLE_WORKOUTS 
+        WHERE $COLUMN_WORKOUT_ID = ?
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(workoutId.toString()))
+
+        return if (cursor.moveToFirst()) {
+            Workout(
+                id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_WORKOUT_ID)),
+                userId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_WORKOUT_USER_ID)),
+                title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_WORKOUT_TITLE)),
+                description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_WORKOUT_DESCRIPTION)),
+                duration = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WORKOUT_DURATION)),
+                date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_WORKOUT_DATE))
+            )
+        } else {
+            null
+        }.also { cursor.close() }
+    }
+
 }
