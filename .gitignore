@@ -72,3 +72,10 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 lint/reports/
+
+
+!app/src/main/java/com/example/fitnessfinal/
+!app/src/main/java/com/example/fitnessfinal/*.kt
+!app/src/main/java/com/example/fitnessfinal/database/
+!app/src/main/java/com/example/fitnessfinal/model/
+!app/src/main/java/com/example/fitnessfinal/utils/
