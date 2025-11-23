@@ -36,7 +36,8 @@ class WorkoutListActivity : AppCompatActivity() {
 
             btnAddWorkout.setOnClickListener {
                 println("✅ Add workout button clicked")
-                startActivity(Intent(this, AddWorkoutActivity::class.java))
+                val intent = Intent(this, AddWorkoutActivity::class.java)
+                startActivity(intent)
             }
 
             loadWorkouts()
@@ -45,7 +46,7 @@ class WorkoutListActivity : AppCompatActivity() {
         } catch (e: Exception) {
             println("❌ ERROR in WorkoutListActivity: ${e.message}")
             e.printStackTrace()
-            Toast.makeText(this, "Ошибка загрузки тренировок", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Ошибка загрузки тренировок: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -63,6 +64,11 @@ class WorkoutListActivity : AppCompatActivity() {
 
             val userId = sessionManager.getUserId()
             println("✅ User ID: $userId")
+
+            if (userId == -1L) {
+                Toast.makeText(this, "Ошибка: пользователь не найден", Toast.LENGTH_SHORT).show()
+                return
+            }
 
             val workouts = databaseHelper.getWorkoutsByUserId(userId)
             println("✅ Workouts found: ${workouts.size}")

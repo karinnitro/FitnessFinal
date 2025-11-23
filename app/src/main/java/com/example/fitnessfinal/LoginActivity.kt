@@ -61,7 +61,10 @@ class LoginActivity : AppCompatActivity() {
             // Успешный вход
             sessionManager.createLoginSession(user)
             Toast.makeText(this, "Добро пожаловать, ${user.name}!", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MainActivity::class.java))
+
+            // Переходим на MainActivity
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
             finish()
         } else {
             // Неправильные данные

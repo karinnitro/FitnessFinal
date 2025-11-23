@@ -8,10 +8,10 @@ class SessionManager(context: Context) {
     private var preferences: SharedPreferences = context.getSharedPreferences("FitnessApp", Context.MODE_PRIVATE)
 
     companion object {
-        const val KEY_IS_LOGGED_IN = "isLoggedIn"
-        const val KEY_USER_ID = "userId"
-        const val KEY_USER_NAME = "userName"
-        const val KEY_USER_EMAIL = "userEmail"
+        private const val KEY_IS_LOGGED_IN = "isLoggedIn"
+        private const val KEY_USER_ID = "userId"
+        private const val KEY_USER_NAME = "userName"
+        private const val KEY_USER_EMAIL = "userEmail"
     }
 
     fun createLoginSession(user: User) {
@@ -21,16 +21,22 @@ class SessionManager(context: Context) {
         editor.putString(KEY_USER_NAME, user.name)
         editor.putString(KEY_USER_EMAIL, user.email)
         editor.apply()
+
+        println("✅ Session created for user: ${user.id}, ${user.name}")
     }
 
-    fun getUserDetails(): HashMap<String, String> {
-        val user = HashMap<String, String>()
-        user[KEY_USER_NAME] = preferences.getString(KEY_USER_NAME, "") ?: ""
-        user[KEY_USER_EMAIL] = preferences.getString(KEY_USER_EMAIL, "") ?: ""
-        return user
+    fun getUserDetails(): Map<String, String> {
+        return mapOf(
+            KEY_USER_NAME to (preferences.getString(KEY_USER_NAME, "") ?: ""),
+            KEY_USER_EMAIL to (preferences.getString(KEY_USER_EMAIL, "") ?: "")
+        )
     }
 
-    fun getUserId(): Long = preferences.getLong(KEY_USER_ID, -1)
+    fun getUserId(): Long {
+        val userId = preferences.getLong(KEY_USER_ID, -1)
+        println("✅ SessionManager.getUserId(): $userId")
+        return userId
+    }
 
     fun isLoggedIn(): Boolean = preferences.getBoolean(KEY_IS_LOGGED_IN, false)
 
@@ -38,5 +44,6 @@ class SessionManager(context: Context) {
         val editor = preferences.edit()
         editor.clear()
         editor.apply()
+        println("✅ User logged out")
     }
 }

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Fitness Final</string>
+    <string name="welcome_title">Добро пожаловать!</string>
+    <string name="welcome_subtitle">Заполните ваши начальные параметры</string>
+    <string name="weight_hint">Вес (кг)</string>
+    <string name="height_hint">Рост (см)</string>
+    <string name="chest_hint">Обхват груди (см)</string>
+    <string name="waist_hint">Обхват талии (см)</string>
+    <string name="hips_hint">Обхват бедер (см)</string>
+    <string name="save_progress">Сохранить прогресс</string>
+    <string name="skip_for_now">Заполнить позже</string>
 </resources>

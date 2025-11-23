@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Заголовок -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Добро пожаловать!"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Заполните ваши начальные параметры"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Вес -->
+        <EditText
+            android:id="@+id/etWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Вес (кг)"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/editbox_background"
+            android:padding="16dp" />
+
+        <!-- Рост -->
+        <EditText
+            android:id="@+id/etHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Рост (см)"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/editbox_background"
+            android:padding="16dp" />
+
+        <!-- Обхват груди -->
+        <EditText
+            android:id="@+id/etChest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Обхват груди (см)"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/editbox_background"
+            android:padding="16dp" />
+
+        <!-- Обхват талии -->
+        <EditText
+            android:id="@+id/etWaist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Обхват талии (см)"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/editbox_background"
+            android:padding="16dp" />
+
+        <!-- Обхват бедер -->
+        <EditText
+            android:id="@+id/etHips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Обхват бедер (см)"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:layout_marginBottom="32dp"
+            android:background="@android:drawable/editbox_background"
+            android:padding="16dp" />
+
+        <!-- Кнопка сохранения -->
+        <Button
+            android:id="@+id/btnSaveProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Сохранить прогресс"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/primary_color"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp"
+            android:padding="16dp" />
+
+        <!-- Кнопка пропуска -->
+        <TextView
+            android:id="@+id/tvSkip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Заполнить позже"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:gravity="center"
+            android:padding="12dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+</ScrollView>
