@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
             println("✅ Layout set")
 
-            // Инициализируем все кнопки
             val textView: TextView = findViewById(R.id.textView)
             val btnWorkouts: Button = findViewById(R.id.btnWorkouts)
             val btnProgress: Button = findViewById(R.id.btnProgress)
@@ -49,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             textView.text = "Добро пожаловать в Фитнес Трекер!"
             println("✅ Text set")
 
-            // Кнопка тренировок - ДОБАВЬТЕ ПРОВЕРКУ
+            // Кнопка тренировок
             btnWorkouts.setOnClickListener {
                 println("✅ Workouts button clicked")
                 Toast.makeText(this, "Переход к тренировкам", Toast.LENGTH_SHORT).show()
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            // Кнопка прогресса - ДОБАВЬТЕ ПРОВЕРКУ
+            // Кнопка прогресса
             btnProgress.setOnClickListener {
                 println("✅ Progress button clicked, userId: $userId")
                 val intent = Intent(this, ProgressActivity::class.java)

@@ -63,9 +63,22 @@ class RegisterActivity : AppCompatActivity() {
 
         // Регистрируем пользователя
         if (databaseHelper.registerUser(email, password, name)) {
-            Toast.makeText(this, "Регистрация успешна! Теперь войдите", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            // Получаем ID только что зарегистрированного пользователя
+            val user = databaseHelper.loginUser(email, password)
+
+            if (user != null) {
+                Toast.makeText(this, "Регистрация успешна! Заполните ваши параметры", Toast.LENGTH_SHORT).show()
+
+                // Переходим на экран заполнения прогресса
+                val intent = Intent(this, InitialProgressActivity::class.java)
+                intent.putExtra("USER_ID", user.id)
+                startActivity(intent)
+                finish()
+            } else {
+                Toast.makeText(this, "Ошибка при получении данных пользователя", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
         } else {
             Toast.makeText(this, "Ошибка регистрации", Toast.LENGTH_SHORT).show()
         }

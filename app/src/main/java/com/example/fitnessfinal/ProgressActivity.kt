@@ -1,8 +1,9 @@
 package com.example.fitnessfinal
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -55,7 +56,7 @@ class ProgressActivity : AppCompatActivity() {
 
             initViews()
             setupClickListeners()
-            loadProgressData()
+            loadProgressData() // Загружаем данные при создании активности
 
             println("✅ ProgressActivity created successfully")
 
@@ -88,7 +89,7 @@ class ProgressActivity : AppCompatActivity() {
         // Кнопка назад
         btnBack.setOnClickListener {
             println("✅ Back button clicked")
-            finish() // Закрывает текущую активность и возвращает на предыдущую
+            finish()
         }
 
         // Кнопка обновления веса
@@ -98,21 +99,24 @@ class ProgressActivity : AppCompatActivity() {
         }
     }
 
-    // Остальные методы остаются без изменений...
     private fun loadProgressData() {
-        println("✅ Loading progress data")
+        println("✅ Loading progress data for user: $userId")
         try {
             // Загружаем последние данные
             val latestProgress = databaseHelper.getLatestProgress(userId)
             println("✅ Latest progress: $latestProgress")
 
             if (latestProgress != null) {
-                tvCurrentWeight.text = String.format("%.1f кг", latestProgress.weight)
+                // ОБНОВЛЯЕМ ДАННЫЕ НА ЭКРАНЕ
+                tvCurrentWeight.text = String.format(Locale.getDefault(), "%.1f кг", latestProgress.weight)
                 tvCurrentHeight.text = if (latestProgress.height != null)
-                    String.format("%.1f см", latestProgress.height) else "не указан"
+                    String.format(Locale.getDefault(), "%.1f см", latestProgress.height) else "не указан"
+
+                println("✅ UI updated - Weight: ${latestProgress.weight}, Height: ${latestProgress.height}")
             } else {
                 tvCurrentWeight.text = "нет данных"
                 tvCurrentHeight.text = "не указан"
+                println("✅ No progress data found")
             }
 
             // Загружаем историю
@@ -147,7 +151,7 @@ class ProgressActivity : AppCompatActivity() {
 
             progressList.reversed().forEach { progress ->
                 val historyItem = TextView(this).apply {
-                    text = String.format("%s - %.1f кг", formatDateForDisplay(progress.date), progress.weight)
+                    text = String.format(Locale.getDefault(), "%s - %.1f кг", formatDateForDisplay(progress.date), progress.weight)
                     textSize = 14f
                     setPadding(32, 16, 32, 16)
                     background = ContextCompat.getDrawable(this@ProgressActivity, android.R.color.transparent)
@@ -200,7 +204,13 @@ class ProgressActivity : AppCompatActivity() {
 
                     if (success) {
                         Toast.makeText(this, "Вес обновлен!", Toast.LENGTH_SHORT).show()
-                        loadProgressData()
+
+                        // Принудительная перезагрузка с задержкой для гарантии
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            println("✅ Reloading data after save...")
+                            loadProgressData()
+                        }, 300)
+
                     } else {
                         Toast.makeText(this, "Ошибка при сохранении", Toast.LENGTH_SHORT).show()
                         println("❌ Failed to save weight")
@@ -225,6 +235,13 @@ class ProgressActivity : AppCompatActivity() {
         } catch (e: Exception) {
             dateString
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        println("✅ ProgressActivity onResume - reloading data")
+        // Перезагружаем данные при возвращении на экран
+        loadProgressData()
     }
 
     override fun onDestroy() {

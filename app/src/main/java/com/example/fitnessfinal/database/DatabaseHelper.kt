@@ -370,9 +370,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(COLUMN_PROGRESS_USER_ID, progress.userId)
             put(COLUMN_PROGRESS_WEIGHT, progress.weight)
             progress.height?.let { put(COLUMN_PROGRESS_HEIGHT, it) }
-            progress.chest?.let { put(COLUMN_PROGRESS_CHEST, it) }
-            progress.waist?.let { put(COLUMN_PROGRESS_WAIST, it) }
-            progress.hips?.let { put(COLUMN_PROGRESS_HIPS, it) }
             put(COLUMN_PROGRESS_DATE, progress.date)
         }
 
@@ -391,19 +388,21 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun getLatestProgress(userId: Long): Progress? {
         println("DatabaseHelper: getLatestProgress for userId: $userId")
         val db = readableDatabase
+
+        // Используем сортировку по ID (самый надежный способ)
         val query = """
-            SELECT * FROM $TABLE_PROGRESS 
-            WHERE $COLUMN_PROGRESS_USER_ID = ? 
-            ORDER BY $COLUMN_PROGRESS_DATE DESC 
-            LIMIT 1
-        """.trimIndent()
+        SELECT * FROM $TABLE_PROGRESS 
+        WHERE $COLUMN_PROGRESS_USER_ID = ? 
+        ORDER BY $COLUMN_PROGRESS_ID DESC 
+        LIMIT 1
+    """.trimIndent()
 
         val cursor = db.rawQuery(query, arrayOf(userId.toString()))
         println("DatabaseHelper: Cursor count: ${cursor.count}")
 
         return try {
             if (cursor.moveToFirst()) {
-                Progress(
+                val progress = Progress(
                     id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_PROGRESS_ID)),
                     userId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_PROGRESS_USER_ID)),
                     weight = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PROGRESS_WEIGHT)),
@@ -417,10 +416,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                         cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PROGRESS_HIPS)) else null,
                     date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PROGRESS_DATE))
                 )
+                println("✅ Latest progress found: ${progress.weight} kg on ${progress.date}")
+                progress
             } else {
+                println("❌ No progress found for user: $userId")
                 null
             }
         } catch (e: Exception) {
+            println("❌ Error in getLatestProgress: ${e.message}")
             null
         } finally {
             cursor.close()
@@ -512,12 +515,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val values = ContentValues().apply {
             put(COLUMN_PROGRESS_USER_ID, userId)
             put(COLUMN_PROGRESS_WEIGHT, weight)
-            put(COLUMN_PROGRESS_DATE, getCurrentDate())
+            put(COLUMN_PROGRESS_DATE, getCurrentDate()) // Используем существующий метод
         }
 
         return try {
             val result = db.insert(TABLE_PROGRESS, null, values) != -1L
             println("✅ Insert result: $result")
+
+            // ДЛЯ ОТЛАДКИ: сразу проверим, что запись добавилась
+            if (result) {
+                val debugList = debugGetAllProgress(userId)
+                println("✅ After update - records count: ${debugList.size}")
+                debugList.forEach { println("✅ Record: $it") }
+            }
+
             result
         } catch (e: Exception) {
             println("❌ Error in updateWeightOnly: ${e.message}")
@@ -526,6 +537,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         } finally {
             db.close()
         }
+    }
+
+    // Добавьте этот метод для получения даты с временем
+    private fun getCurrentDateTime(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return dateFormat.format(Date())
     }
 
     // === ОТЛАДОЧНЫЕ МЕТОДЫ ===

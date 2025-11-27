@@ -31,59 +31,39 @@
             android:layout_marginBottom="32dp" />
 
         <!-- Вес -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Вес (обязательно)"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="4dp" />
+
         <EditText
             android:id="@+id/etWeight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Вес (кг)"
+            android:hint="Введите ваш вес в кг"
             android:inputType="numberDecimal"
             android:maxLines="1"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:background="@android:drawable/editbox_background"
             android:padding="16dp" />
 
         <!-- Рост -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Рост (рекомендуется)"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="4dp" />
+
         <EditText
             android:id="@+id/etHeight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Рост (см)"
-            android:inputType="numberDecimal"
-            android:maxLines="1"
-            android:layout_marginBottom="16dp"
-            android:background="@android:drawable/editbox_background"
-            android:padding="16dp" />
-
-        <!-- Обхват груди -->
-        <EditText
-            android:id="@+id/etChest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Обхват груди (см)"
-            android:inputType="numberDecimal"
-            android:maxLines="1"
-            android:layout_marginBottom="16dp"
-            android:background="@android:drawable/editbox_background"
-            android:padding="16dp" />
-
-        <!-- Обхват талии -->
-        <EditText
-            android:id="@+id/etWaist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Обхват талии (см)"
-            android:inputType="numberDecimal"
-            android:maxLines="1"
-            android:layout_marginBottom="16dp"
-            android:background="@android:drawable/editbox_background"
-            android:padding="16dp" />
-
-        <!-- Обхват бедер -->
-        <EditText
-            android:id="@+id/etHips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Обхват бедер (см)"
+            android:hint="Введите ваш рост в см"
             android:inputType="numberDecimal"
             android:maxLines="1"
             android:layout_marginBottom="32dp"
@@ -95,7 +75,7 @@
             android:id="@+id/btnSaveProgress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Сохранить прогресс"
+            android:text="Сохранить и продолжить"
             android:textSize="16sp"
             android:textStyle="bold"
             android:backgroundTint="@color/primary_color"

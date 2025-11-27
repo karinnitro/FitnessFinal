@@ -20,9 +20,6 @@ class InitialProgressActivity : AppCompatActivity() {
 
     private lateinit var etWeight: EditText
     private lateinit var etHeight: EditText
-    private lateinit var etChest: EditText
-    private lateinit var etWaist: EditText
-    private lateinit var etHips: EditText
     private lateinit var btnSaveProgress: Button
     private lateinit var tvSkip: TextView
 
@@ -40,6 +37,8 @@ class InitialProgressActivity : AppCompatActivity() {
             return
         }
 
+        println("✅ InitialProgressActivity - User ID: $userId")
+
         initViews()
         setupClickListeners()
     }
@@ -47,9 +46,6 @@ class InitialProgressActivity : AppCompatActivity() {
     private fun initViews() {
         etWeight = findViewById(R.id.etWeight)
         etHeight = findViewById(R.id.etHeight)
-        etChest = findViewById(R.id.etChest)
-        etWaist = findViewById(R.id.etWaist)
-        etHips = findViewById(R.id.etHips)
         btnSaveProgress = findViewById(R.id.btnSaveProgress)
         tvSkip = findViewById(R.id.tvSkip)
     }
@@ -62,7 +58,7 @@ class InitialProgressActivity : AppCompatActivity() {
 
         // Пропуск заполнения
         tvSkip.setOnClickListener {
-            navigateToMainActivity()
+            navigateToLoginActivity()
         }
     }
 
@@ -81,27 +77,12 @@ class InitialProgressActivity : AppCompatActivity() {
             return
         }
 
-        // Получаем остальные параметры (они не обязательные)
+        // Получаем рост (не обязательный)
         val height = etHeight.text.toString().trim().toDoubleOrNull()
-        val chest = etChest.text.toString().trim().toDoubleOrNull()
-        val waist = etWaist.text.toString().trim().toDoubleOrNull()
-        val hips = etHips.text.toString().trim().toDoubleOrNull()
 
-        // Проверка валидности необязательных полей
+        // Проверка валидности роста
         if (height != null && height <= 0) {
             etHeight.error = "Введите корректный рост"
-            return
-        }
-        if (chest != null && chest <= 0) {
-            etChest.error = "Введите корректный обхват груди"
-            return
-        }
-        if (waist != null && waist <= 0) {
-            etWaist.error = "Введите корректный обхват талии"
-            return
-        }
-        if (hips != null && hips <= 0) {
-            etHips.error = "Введите корректный обхват бедер"
             return
         }
 
@@ -111,9 +92,9 @@ class InitialProgressActivity : AppCompatActivity() {
             userId = userId,
             weight = weight,
             height = height,
-            chest = chest,
-            waist = waist,
-            hips = hips,
+            chest = null,  // Убрали обхваты
+            waist = null,  // Убрали обхваты
+            hips = null,   // Убрали обхваты
             date = currentDate
         )
 
@@ -121,8 +102,8 @@ class InitialProgressActivity : AppCompatActivity() {
         val success = databaseHelper.addProgress(progress)
 
         if (success) {
-            Toast.makeText(this, "Данные успешно сохранены!", Toast.LENGTH_SHORT).show()
-            navigateToMainActivity()
+            Toast.makeText(this, "Данные успешно сохранены! Теперь войдите в систему", Toast.LENGTH_SHORT).show()
+            navigateToLoginActivity()
         } else {
             Toast.makeText(this, "Ошибка при сохранении данных", Toast.LENGTH_SHORT).show()
         }
@@ -133,11 +114,9 @@ class InitialProgressActivity : AppCompatActivity() {
         return dateFormat.format(Date())
     }
 
-    private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra("USER_ID", userId)
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        }
+    private fun navigateToLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         finish()
     }
