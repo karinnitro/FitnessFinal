@@ -83,6 +83,10 @@ class ProgressActivity : AppCompatActivity() {
     private fun loadProgressData() {
         println("✅ Loading progress data")
         try {
+            // Сначала проверим все записи в базе для отладки
+            val allProgress = databaseHelper.debugGetAllProgress(userId)
+            println("✅ All progress records: ${allProgress.size}")
+
             // Загружаем последние данные
             val latestProgress = databaseHelper.getLatestProgress(userId)
             println("✅ Latest progress: $latestProgress")
@@ -173,6 +177,7 @@ class ProgressActivity : AppCompatActivity() {
                 .setView(input)
                 .setPositiveButton("Сохранить") { dialog, which ->
                     val weightText = input.text.toString().trim()
+                    println("✅ Weight entered: $weightText")
 
                     if (weightText.isEmpty()) {
                         Toast.makeText(this, "Введите вес", Toast.LENGTH_SHORT).show()
@@ -185,14 +190,18 @@ class ProgressActivity : AppCompatActivity() {
                         return@setPositiveButton
                     }
 
+                    println("✅ Saving weight: $weight for user: $userId")
+
                     // Сохраняем только вес, рост берем из предыдущих записей
                     val success = databaseHelper.updateWeightOnly(userId, weight)
+                    println("✅ Save result: $success")
 
                     if (success) {
                         Toast.makeText(this, "Вес обновлен!", Toast.LENGTH_SHORT).show()
                         loadProgressData()
                     } else {
                         Toast.makeText(this, "Ошибка при сохранении", Toast.LENGTH_SHORT).show()
+                        println("❌ Failed to save weight")
                     }
                 }
                 .setNegativeButton("Отмена", null)
