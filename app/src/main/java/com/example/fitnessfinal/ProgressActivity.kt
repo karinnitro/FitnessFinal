@@ -5,13 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.fitnessfinal.database.DatabaseHelper
-import com.example.fitnessfinal.utils.SessionManager  // Добавьте этот импорт
+import com.example.fitnessfinal.utils.SessionManager
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -19,12 +20,13 @@ import java.util.Locale
 class ProgressActivity : AppCompatActivity() {
 
     private lateinit var databaseHelper: DatabaseHelper
-    private lateinit var sessionManager: SessionManager  // Объявите SessionManager
+    private lateinit var sessionManager: SessionManager
     private var userId: Long = 0
 
     private lateinit var tvCurrentWeight: TextView
     private lateinit var tvCurrentHeight: TextView
     private lateinit var btnUpdateWeight: Button
+    private lateinit var btnBack: ImageButton
     private lateinit var llProgressHistory: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,12 +38,11 @@ class ProgressActivity : AppCompatActivity() {
             println("✅ Layout set successfully")
 
             databaseHelper = DatabaseHelper(this)
-            sessionManager = SessionManager(this)  // Инициализируйте SessionManager
+            sessionManager = SessionManager(this)
 
             // Получаем ID пользователя из Intent или из SessionManager
             userId = intent.getLongExtra("USER_ID", 0)
             if (userId == 0L) {
-                // Если не получили из Intent, пробуем из SessionManager
                 userId = sessionManager.getUserId()
                 println("✅ User ID from SessionManager: $userId")
             }
@@ -53,8 +54,8 @@ class ProgressActivity : AppCompatActivity() {
             }
 
             initViews()
-            loadProgressData()
             setupClickListeners()
+            loadProgressData()
 
             println("✅ ProgressActivity created successfully")
 
@@ -71,6 +72,7 @@ class ProgressActivity : AppCompatActivity() {
             tvCurrentWeight = findViewById(R.id.tvCurrentWeight)
             tvCurrentHeight = findViewById(R.id.tvCurrentHeight)
             btnUpdateWeight = findViewById(R.id.btnUpdateWeight)
+            btnBack = findViewById(R.id.btnBack)
             llProgressHistory = findViewById(R.id.llProgressHistory)
             println("✅ Views initialized successfully")
         } catch (e: Exception) {
@@ -80,13 +82,26 @@ class ProgressActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupClickListeners() {
+        println("✅ Setting up click listeners")
+
+        // Кнопка назад
+        btnBack.setOnClickListener {
+            println("✅ Back button clicked")
+            finish() // Закрывает текущую активность и возвращает на предыдущую
+        }
+
+        // Кнопка обновления веса
+        btnUpdateWeight.setOnClickListener {
+            println("✅ Update weight button clicked")
+            showUpdateWeightDialog()
+        }
+    }
+
+    // Остальные методы остаются без изменений...
     private fun loadProgressData() {
         println("✅ Loading progress data")
         try {
-            // Сначала проверим все записи в базе для отладки
-            val allProgress = databaseHelper.debugGetAllProgress(userId)
-            println("✅ All progress records: ${allProgress.size}")
-
             // Загружаем последние данные
             val latestProgress = databaseHelper.getLatestProgress(userId)
             println("✅ Latest progress: $latestProgress")
@@ -131,7 +146,6 @@ class ProgressActivity : AppCompatActivity() {
             }
 
             progressList.reversed().forEach { progress ->
-                // Создаем элемент истории программно
                 val historyItem = TextView(this).apply {
                     text = String.format("%s - %.1f кг", formatDateForDisplay(progress.date), progress.weight)
                     textSize = 14f
@@ -144,7 +158,6 @@ class ProgressActivity : AppCompatActivity() {
                         setMargins(0, 0, 0, 8)
                     }
                 }
-
                 llProgressHistory.addView(historyItem)
             }
             println("✅ Progress history loaded successfully")
@@ -155,18 +168,9 @@ class ProgressActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupClickListeners() {
-        println("✅ Setting up click listeners")
-        btnUpdateWeight.setOnClickListener {
-            println("✅ Update weight button clicked")
-            showUpdateWeightDialog()
-        }
-    }
-
     private fun showUpdateWeightDialog() {
         println("✅ Showing update weight dialog")
         try {
-            // Создаем диалог программно вместо использования layout
             val input = EditText(this).apply {
                 hint = "Вес (кг)"
                 inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -191,8 +195,6 @@ class ProgressActivity : AppCompatActivity() {
                     }
 
                     println("✅ Saving weight: $weight for user: $userId")
-
-                    // Сохраняем только вес, рост берем из предыдущих записей
                     val success = databaseHelper.updateWeightOnly(userId, weight)
                     println("✅ Save result: $success")
 

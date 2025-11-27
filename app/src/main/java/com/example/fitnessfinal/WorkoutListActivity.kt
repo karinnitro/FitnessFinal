@@ -3,6 +3,7 @@ package com.example.fitnessfinal
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -17,6 +18,7 @@ class WorkoutListActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var layoutWorkouts: LinearLayout
     private lateinit var btnAddWorkout: Button
+    private lateinit var btnBack: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +34,18 @@ class WorkoutListActivity : AppCompatActivity() {
 
             layoutWorkouts = findViewById(R.id.layoutWorkouts)
             btnAddWorkout = findViewById(R.id.btnAddWorkout)
+            btnBack = findViewById(R.id.btnBack)
             println("✅ Views found")
+
+            // Кнопка назад
+            btnBack.setOnClickListener {
+                println("✅ Back button clicked")
+                finish() // Возврат на главный экран
+            }
 
             btnAddWorkout.setOnClickListener {
                 println("✅ Add workout button clicked")
-                val intent = Intent(this, AddWorkoutActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, AddWorkoutActivity::class.java))
             }
 
             loadWorkouts()
@@ -46,10 +54,11 @@ class WorkoutListActivity : AppCompatActivity() {
         } catch (e: Exception) {
             println("❌ ERROR in WorkoutListActivity: ${e.message}")
             e.printStackTrace()
-            Toast.makeText(this, "Ошибка загрузки тренировок: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Ошибка загрузки тренировок", Toast.LENGTH_SHORT).show()
         }
     }
 
+    // Остальные методы остаются без изменений...
     override fun onResume() {
         super.onResume()
         println("✅ WorkoutListActivity onResume")
