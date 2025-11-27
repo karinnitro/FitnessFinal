@@ -13,7 +13,7 @@
         android:text="Фитнес Трекер"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:textColor="#2196F3"
+        android:textColor="@color/text_primary"
         android:layout_marginBottom="40dp" />
 
     <!-- Простая карточка -->
@@ -65,11 +65,15 @@
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="Зарегистрироваться"
-            android:background="#2196F3"
-            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:background="@drawable/button_gold_gradient"
+            android:textColor="@color/white"
             android:layout_marginBottom="16dp" />
+
 
         <!-- Ссылка на вход -->
         <TextView
@@ -77,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Уже есть аккаунт? Войти"
-            android:textColor="#2196F3"
+            android:textColor="@color/text_secondary"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>

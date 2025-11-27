@@ -24,6 +24,9 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         initViews()
+
+
+
         databaseHelper = DatabaseHelper(this)
         sessionManager = SessionManager(this)
 
@@ -43,6 +46,8 @@ class LoginActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         tvRegister = findViewById(R.id.tvRegister)
     }
+
+
 
     private fun loginUser() {
         val email = etEmail.text.toString().trim()

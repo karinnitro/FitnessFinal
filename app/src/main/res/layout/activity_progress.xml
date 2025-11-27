@@ -88,7 +88,7 @@
                     android:text="-- кг"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/primary_color" />
+                    android:textColor="@color/primary_gold" />
 
             </LinearLayout>
 
@@ -116,7 +116,7 @@
                     android:text="-- см"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/primary_color" />
+                    android:textColor="@color/primary_gold" />
 
             </LinearLayout>
 
@@ -128,7 +128,7 @@
                 android:text="Обновить вес"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:backgroundTint="@color/primary_color"
+                android:backgroundTint="@color/primary_gold"
                 android:textColor="@android:color/white"
                 android:layout_marginBottom="16dp"
                 android:padding="16dp" />
