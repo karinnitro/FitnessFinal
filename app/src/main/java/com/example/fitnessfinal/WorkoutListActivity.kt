@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.fitnessfinal.database.DatabaseHelper
 import com.example.fitnessfinal.model.Workout
 import com.example.fitnessfinal.utils.SessionManager
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class WorkoutListActivity : AppCompatActivity() {
 
@@ -58,7 +61,6 @@ class WorkoutListActivity : AppCompatActivity() {
         }
     }
 
-    // Остальные методы остаются без изменений...
     override fun onResume() {
         super.onResume()
         println("✅ WorkoutListActivity onResume")
@@ -103,50 +105,56 @@ class WorkoutListActivity : AppCompatActivity() {
 
     private fun addWorkoutView(workout: Workout) {
         try {
-            val workoutLayout = LinearLayout(this)
-            workoutLayout.orientation = LinearLayout.VERTICAL
-            workoutLayout.setPadding(0, 16, 0, 16)
+            val workoutCard = layoutInflater.inflate(R.layout.item_workout, layoutWorkouts, false)
 
-            val tvTitle = TextView(this)
+            val tvTitle: TextView = workoutCard.findViewById(R.id.tvWorkoutTitle)
+            val tvDate: TextView = workoutCard.findViewById(R.id.tvWorkoutDate)
+            val tvDuration: TextView = workoutCard.findViewById(R.id.tvWorkoutDuration)
+            val tvDescription: TextView = workoutCard.findViewById(R.id.tvWorkoutDescription)
+            val btnEdit: Button = workoutCard.findViewById(R.id.btnEditWorkout)
+            val btnDelete: Button = workoutCard.findViewById(R.id.btnDeleteWorkout)
+
+            // Заполняем данными
             tvTitle.text = workout.title
-            tvTitle.textSize = 18f
-            tvTitle.setPadding(16, 8, 16, 4)
+            tvDate.text = formatDateForDisplay(workout.date)
+            tvDuration.text = "${workout.duration} мин"
+            tvDescription.text = workout.description.ifEmpty { "Без описания" }
 
-            val tvDetails = TextView(this)
-            tvDetails.text = "${workout.duration} мин • ${workout.date}"
-            tvDetails.textSize = 14f
-            tvDetails.setPadding(16, 4, 16, 8)
+            // Кнопка редактирования
+            btnEdit.setOnClickListener {
+                editWorkout(workout.id)
+            }
 
-            val tvDescription = TextView(this)
-            tvDescription.text = workout.description
-            tvDescription.textSize = 12f
-            tvDescription.setPadding(16, 4, 16, 16)
-
-            val btnDelete = Button(this)
-            btnDelete.text = "Удалить"
-            btnDelete.setPadding(16, 8, 16, 8)
+            // Кнопка удаления
             btnDelete.setOnClickListener {
                 deleteWorkout(workout.id)
             }
 
-            workoutLayout.addView(tvTitle)
-            workoutLayout.addView(tvDetails)
-            workoutLayout.addView(tvDescription)
-            workoutLayout.addView(btnDelete)
+            layoutWorkouts.addView(workoutCard)
 
-            // Добавляем разделитель
-            val divider = TextView(this)
-            divider.text = "―".repeat(50)
-            divider.textSize = 12f
-            divider.setPadding(0, 8, 0, 8)
-
-            layoutWorkouts.addView(workoutLayout)
-            layoutWorkouts.addView(divider)
-
-            println("✅ Workout view added: ${workout.title}")
+            println("✅ Workout card added: ${workout.title}")
         } catch (e: Exception) {
             println("❌ ERROR adding workout view: ${e.message}")
         }
+    }
+
+    // Метод для форматирования даты
+    private fun formatDateForDisplay(dateString: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            val date = inputFormat.parse(dateString)
+            outputFormat.format(date ?: Date())
+        } catch (e: Exception) {
+            dateString
+        }
+    }
+
+    // Метод для редактирования тренировки
+    private fun editWorkout(workoutId: Long) {
+        val intent = Intent(this, EditWorkoutActivity::class.java)
+        intent.putExtra("WORKOUT_ID", workoutId)
+        startActivity(intent)
     }
 
     private fun deleteWorkout(workoutId: Long) {

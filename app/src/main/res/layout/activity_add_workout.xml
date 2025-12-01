@@ -67,7 +67,7 @@
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Название тренировки*"
+            android:hint="Название тренировки"
             android:inputType="textCapWords"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />

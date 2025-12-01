@@ -46,5 +46,10 @@
             android:name=".ProgressActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".EditWorkoutActivity"
+            android:exported="false"
+            android:theme="@style/Theme.FitnessFinal" />
+
     </application>
 </manifest>
