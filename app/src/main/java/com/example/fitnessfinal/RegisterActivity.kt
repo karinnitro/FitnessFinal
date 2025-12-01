@@ -44,6 +44,8 @@ class RegisterActivity : AppCompatActivity() {
         tvLogin = findViewById(R.id.tvLogin)
     }
 
+
+
     private fun registerUser() {
         val name = etName.text.toString().trim()
         val email = etEmail.text.toString().trim()

@@ -2,12 +2,13 @@ package com.example.fitnessfinal
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.card.MaterialCardView
 import com.example.fitnessfinal.database.DatabaseHelper
 import com.example.fitnessfinal.utils.SessionManager
+import androidx.appcompat.app.AlertDialog
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,38 +40,39 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
             println("✅ Layout set")
 
-            val textView: TextView = findViewById(R.id.textView)
-            val btnWorkouts: Button = findViewById(R.id.btnWorkouts)
-            val btnProgress: Button = findViewById(R.id.btnProgress)
-            val btnLogout: Button = findViewById(R.id.btnLogout)
+            // ИСПРАВЛЕННЫЙ КОД:
+            val cardWorkouts = findViewById<MaterialCardView>(R.id.cardWorkouts)
+            val cardProgress = findViewById<MaterialCardView>(R.id.cardProgress)
+            val tvLogout = findViewById<TextView>(R.id.tvLogout)  // ← ИСПРАВЛЕНО: tvLogout вместо cardLogout
             println("✅ Views found")
 
-            textView.text = "Добро пожаловать в Фитнес Трекер!"
-            println("✅ Text set")
-
-            // Кнопка тренировок
-            btnWorkouts.setOnClickListener {
-                println("✅ Workouts button clicked")
+            // Карточка тренировок
+            cardWorkouts.setOnClickListener {
                 Toast.makeText(this, "Переход к тренировкам", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, WorkoutListActivity::class.java)
                 startActivity(intent)
             }
 
-            // Кнопка прогресса
-            btnProgress.setOnClickListener {
-                println("✅ Progress button clicked, userId: $userId")
+            // Карточка прогресса
+            cardProgress.setOnClickListener {
                 val intent = Intent(this, ProgressActivity::class.java)
                 intent.putExtra("USER_ID", userId)
                 startActivity(intent)
             }
 
-            // Кнопка выхода
-            btnLogout.setOnClickListener {
-                println("✅ Logout button clicked")
-                sessionManager.logoutUser()
-                Toast.makeText(this, "Вы вышли из системы", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
+            // Кнопка выхода (TextView)
+            tvLogout.setOnClickListener {
+                AlertDialog.Builder(this)
+                    .setTitle("Выход")
+                    .setMessage("Вы уверены, что хотите выйти?")
+                    .setPositiveButton("Выйти") { dialog, which ->
+                        sessionManager.logoutUser()
+                        Toast.makeText(this, "Вы вышли из системы", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
+                    .setNegativeButton("Отмена", null)
+                    .show()
             }
 
             println("✅ MainActivity created successfully")
