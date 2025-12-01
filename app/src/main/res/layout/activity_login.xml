@@ -108,6 +108,8 @@
                     app:boxStrokeColor="@color/primary_gold"
                     app:hintTextColor="@color/text_secondary"
                     app:placeholderTextColor="@color/text_hint"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/primary_gold"
                     style="@style/TextInputStyle">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -119,7 +121,7 @@
                         android:textColor="@color/text_primary"
                         android:textSize="16sp" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>>
 
                 <!-- Кнопка Входа -->
                 <Button
