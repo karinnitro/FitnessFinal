@@ -15,7 +15,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "FitnessApp.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 6
 
         // Таблица пользователей
         private const val TABLE_USERS = "users"
@@ -43,6 +43,16 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val COLUMN_PROGRESS_WAIST = "waist"
         private const val COLUMN_PROGRESS_HIPS = "hips"
         private const val COLUMN_PROGRESS_DATE = "date"
+
+        // Админский email
+        private const val ADMIN_EMAIL = "admin@fitness.com"
+        private const val ADMIN_PASSWORD = "admin123"
+
+        // Колонка админа
+        private const val COLUMN_USER_IS_ADMIN = "is_admin"
+
+
+
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -52,10 +62,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         println("✅ DatabaseHelper.onUpgrade() - from $oldVersion to $newVersion")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_PROGRESS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_WORKOUTS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
-        onCreate(db)
+
+        if (oldVersion < 4) {
+            // Миграция: добавляем колонку is_admin
+            try {
+                db.execSQL("""
+                ALTER TABLE $TABLE_USERS 
+                ADD COLUMN $COLUMN_USER_IS_ADMIN INTEGER DEFAULT 0
+            """.trimIndent())
+                println("✅ Column is_admin added to users table")
+            } catch (e: Exception) {
+                println("❌ Error adding column: ${e.message}")
+            }
+        }
+
     }
 
     override fun onOpen(db: SQLiteDatabase) {
@@ -64,6 +84,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             db.execSQL("PRAGMA foreign_keys=ON;")
         }
         checkAndCreateTables(db)
+        createAdminUser(db)
     }
 
     private fun createAllTables(db: SQLiteDatabase) {
@@ -74,7 +95,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     $COLUMN_USER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     $COLUMN_USER_EMAIL TEXT UNIQUE NOT NULL,
                     $COLUMN_USER_PASSWORD TEXT NOT NULL,
-                    $COLUMN_USER_NAME TEXT NOT NULL
+                    $COLUMN_USER_NAME TEXT NOT NULL,
+                    $COLUMN_USER_IS_ADMIN INTEGER DEFAULT 0
                 )
             """.trimIndent()
 
@@ -137,7 +159,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                             $COLUMN_USER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                             $COLUMN_USER_EMAIL TEXT UNIQUE NOT NULL,
                             $COLUMN_USER_PASSWORD TEXT NOT NULL,
-                            $COLUMN_USER_NAME TEXT NOT NULL
+                            $COLUMN_USER_NAME TEXT NOT NULL,
+                            $COLUMN_USER_IS_ADMIN INTEGER DEFAULT 0
                         )
                     """.trimIndent())
                     TABLE_WORKOUTS -> db.execSQL("""
@@ -598,5 +621,136 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val db = writableDatabase
         checkAndCreateTables(db)
         db.close()
+    }
+
+    // === МЕТОДЫ ДЛЯ АДМИНИСТРИРОВАНИЯ ===
+
+    fun isUserAdmin(userId: Long): Boolean {
+        val db = readableDatabase
+        val query = """
+        SELECT $COLUMN_USER_IS_ADMIN FROM $TABLE_USERS 
+        WHERE $COLUMN_USER_ID = ?
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(userId.toString()))
+
+        return try {
+            if (cursor.moveToFirst()) {
+                val isAdmin = cursor.getInt(0) == 1
+                println("✅ isUserAdmin($userId): $isAdmin")
+                isAdmin
+            } else {
+                println("❌ User $userId not found")
+                false
+            }
+        } catch (e: Exception) {
+            println("❌ Error in isUserAdmin: ${e.message}")
+            false
+        } finally {
+            cursor.close()
+            db.close()
+        }
+    }
+
+    fun getAllUsers(): List<User> {
+        val users = mutableListOf<User>()
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_USERS ORDER BY $COLUMN_USER_NAME"
+        val cursor = db.rawQuery(query, null)
+
+        try {
+            while (cursor.moveToNext()) {
+                val user = User(
+                    id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_USER_ID)),
+                    email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_EMAIL)),
+                    password = "",  // Не возвращаем пароль в целях безопасности
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_NAME))
+                )
+                users.add(user)
+            }
+            println("✅ getAllUsers() returned ${users.size} users")
+        } catch (e: Exception) {
+            println("❌ Error in getAllUsers: ${e.message}")
+        } finally {
+            cursor.close()
+            db.close()
+        }
+        return users
+    }
+
+    fun deleteUser(userId: Long): Boolean {
+        val db = writableDatabase
+
+        // Сначала удаляем связанные записи (cascade не всегда работает)
+        db.delete(TABLE_WORKOUTS, "$COLUMN_WORKOUT_USER_ID = ?", arrayOf(userId.toString()))
+        db.delete(TABLE_PROGRESS, "$COLUMN_PROGRESS_USER_ID = ?", arrayOf(userId.toString()))
+
+        // Затем удаляем пользователя
+        val result = db.delete(
+            TABLE_USERS,
+            "$COLUMN_USER_ID = ?",
+            arrayOf(userId.toString())
+        ) > 0
+
+        println("✅ deleteUser($userId): $result")
+        db.close()
+        return result
+    }
+
+    fun getUserById(userId: Long): User? {
+        val db = readableDatabase
+        val query = """
+        SELECT * FROM $TABLE_USERS 
+        WHERE $COLUMN_USER_ID = ?
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(userId.toString()))
+
+        return try {
+            if (cursor.moveToFirst()) {
+                User(
+                    id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_USER_ID)),
+                    email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_EMAIL)),
+                    password = "",
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_NAME))
+                )
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        } finally {
+            cursor.close()
+            db.close()
+        }
+    }
+
+     //Создает администратора при первом запуске
+    fun createAdminUser(db: SQLiteDatabase) {  // ← Принимаем базу как параметр
+        // Проверяем, существует ли уже админ
+        val query = "SELECT COUNT(*) FROM $TABLE_USERS WHERE $COLUMN_USER_EMAIL = ?"
+        val cursor = db.rawQuery(query, arrayOf(ADMIN_EMAIL))
+
+        val adminExists = cursor.moveToFirst() && cursor.getInt(0) > 0
+        cursor.close()
+        if (!adminExists) {
+            // Сохраняем пароль БЕЗ хеширования (так как у тебя нет хеширования)
+            val values = ContentValues().apply {
+                put(COLUMN_USER_EMAIL, ADMIN_EMAIL)
+                put(COLUMN_USER_PASSWORD, ADMIN_PASSWORD)  // ← Без хеширования!
+                put(COLUMN_USER_NAME, "Администратор")
+                put(COLUMN_USER_IS_ADMIN, 1)
+            }
+
+            try {
+                val result = db.insert(TABLE_USERS, null, values) != -1L
+                println("✅ Admin user created with plain password: $result")
+            } catch (e: Exception) {
+                println("❌ Error creating admin: ${e.message}")
+            }
+        }
+
+
+        // НЕ закрываем db здесь!
     }
 }

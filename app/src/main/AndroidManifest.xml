@@ -51,5 +51,9 @@
             android:exported="false"
             android:theme="@style/Theme.FitnessFinal" />
 
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
+
     </application>
 </manifest>

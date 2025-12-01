@@ -53,26 +53,34 @@ class LoginActivity : AppCompatActivity() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
 
-        // Проверяем что поля не пустые
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Проверяем пользователя в базе данных
         val user = databaseHelper.loginUser(email, password)
 
         if (user != null) {
-            // Успешный вход
             sessionManager.createLoginSession(user)
             Toast.makeText(this, "Добро пожаловать, ${user.name}!", Toast.LENGTH_SHORT).show()
 
-            // Переходим на MainActivity
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            // ПРОВЕРЯЕМ, АДМИН ЛИ ЭТО
+            val isAdmin = databaseHelper.isUserAdmin(user.id)
+
+            if (isAdmin) {
+                println("✅ User is ADMIN - redirecting to AdminActivity")
+                // Админа отправляем сразу в админ-панель
+                val intent = Intent(this, AdminActivity::class.java)
+                startActivity(intent)
+            } else {
+                println("✅ User is REGULAR - redirecting to MainActivity")
+                // Обычного пользователя отправляем на главный экран
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+
             finish()
         } else {
-            // Неправильные данные
             Toast.makeText(this, "Неверный email или пароль", Toast.LENGTH_SHORT).show()
         }
     }
