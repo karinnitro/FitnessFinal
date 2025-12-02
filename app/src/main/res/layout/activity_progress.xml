@@ -1,155 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@color/background_light">
 
-    <!-- Добавьте Toolbar с кнопкой назад -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="?attr/actionBarTheme"
-        android:minHeight="?attr/actionBarSize">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primary_gold"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_revert"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Назад" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Мой прогресс"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- Текущие показатели -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Текущие показатели"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Карточка с текущим весом - БЕЛАЯ -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@android:color/white"
+        android:layout_marginBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <!-- Кнопка назад -->
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@android:drawable/ic_menu_revert"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Назад" />
+            android:padding="16dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Мой прогресс"
-                android:textSize="20sp"
+                android:text="Текущий вес:"
+                android:textSize="16sp"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/tvCurrentWeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-- кг"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:gravity="center" />
+                android:textColor="@color/primary_gold" />
 
         </LinearLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.card.MaterialCardView>
 
-    <ScrollView
+    <!-- Карточка с ростом - БЕЛАЯ -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white"
+    android:layout_marginBottom="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:text="Рост:"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary" />
 
-            <!-- Текущие показатели -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Текущие показатели"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:gravity="center"
-                android:layout_marginBottom="24dp" />
+        <TextView
+            android:id="@+id/tvCurrentHeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-- см"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_gold" />
 
-            <!-- Карточка с текущим весом -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@android:color/darker_gray"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp">
+    </LinearLayout>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Текущий вес:"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black" />
+</com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/tvCurrentWeight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-- кг"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary_gold" />
+    <!-- Кнопка обновления веса -->
+<Button
+android:id="@+id/btnUpdateWeight"
+android:layout_width="match_parent"
+android:layout_height="56dp"
+android:text="ОБНОВИТЬ ВЕС"
+android:textSize="16sp"
+android:textStyle="bold"
+android:background="@drawable/button_gold_gradient"
+android:textColor="@color/white"
+android:layout_marginBottom="24dp" />
 
-            </LinearLayout>
+    <!-- ГРАФИК ВЕСА -->
+<com.google.android.material.card.MaterialCardView
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+app:cardCornerRadius="16dp"
+app:cardElevation="6dp"
+app:cardBackgroundColor="@android:color/white"
+    app:strokeColor="@color/primary_gold_light"
+    app:strokeWidth="1dp"
+    android:layout_marginBottom="16dp">
 
-            <!-- Карточка с ростом -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@android:color/darker_gray"
-                android:padding="16dp"
-                android:layout_marginBottom="32dp">
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical"
+android:padding="16dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Рост:"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/black" />
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="График изменения веса"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:textColor="@color/text_primary"
+    android:gravity="center"
+    android:layout_marginBottom="16dp" />
 
-                <TextView
-                    android:id="@+id/tvCurrentHeight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-- см"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary_gold" />
+<LinearLayout
+    android:id="@+id/chartContainer"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:orientation="vertical"
+    android:gravity="center" />
 
-            </LinearLayout>
-
-            <!-- Кнопка обновления веса -->
-            <Button
-                android:id="@+id/btnUpdateWeight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Обновить вес"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:backgroundTint="@color/primary_gold"
-                android:textColor="@android:color/white"
-                android:layout_marginBottom="16dp"
-                android:padding="16dp" />
-
-            <!-- Заголовок истории -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="История измерений:"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="16dp" />
-
-            <LinearLayout
-                android:id="@+id/llProgressHistory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
-        </LinearLayout>
-    </ScrollView>
 </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- История измерений -->
+<TextView
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="История измерений:"
+android:textSize="18sp"
+android:textStyle="bold"
+android:textColor="@color/text_primary"
+android:layout_marginTop="16dp"
+android:layout_marginBottom="12dp" />
+
+<LinearLayout
+android:id="@+id/llProgressHistory"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical" />
+
+    </LinearLayout>
+    </ScrollView>
